@@ -10,7 +10,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 
-    <title>Hello, world!</title>
+    <title>1v1</title>
     <style type="text/css">
         .win {
             background-color: #9acd32;
@@ -31,7 +31,7 @@
 
     <div class="row">
         <div class="col">
-            <canvas id="myChart" height="80"></canvas>
+            <canvas id="chart1" height="80"></canvas>
         </div>
         <div class="col">
             <canvas id="chart2"></canvas>
@@ -43,70 +43,29 @@
 </body>
 
 
-
-
-
 <script type="text/javascript">
 
+var maxGamesPerSet=0;
+var playerA = '?';
+var playerB = '?';
+var winMatchesForSet =0;
 
-    var results = {
-        "winMatchesForSet": 5,
-        "playerA": "Danny",
-        "playerB": "Eric",
-        "matches": [
-            {
-                "scorePlayerA": 0,
-                "scorePlayerB": 1
-            },
-            {
-                "scorePlayerA": 1,
-                "scorePlayerB": 0
-            },
-            {
-                "scorePlayerA": 1,
-                "scorePlayerB": 0
-            },
-            {
-                "scorePlayerA": 1,
-                "scorePlayerB": 0
-            },
-            {
-                "scorePlayerA": 0,
-                "scorePlayerB": 1
-            },
-            {
-                "scorePlayerA": 1,
-                "scorePlayerB": 0
-            },
-            {
-                "scorePlayerA": 0,
-                "scorePlayerB": 1
-            },
-            {
-                "scorePlayerA": 1,
-                "scorePlayerB": 0
-            },
-            {
-                "scorePlayerA": 0,
-                "scorePlayerB": 1
-            },
-            {
-                "scorePlayerA": 0,
-                "scorePlayerB": 1
-            },
-            {
-                "scorePlayerA": 1,
-                "scorePlayerB": 0
-            }
-        ]
-    };
+var dataUrl = getUrlParameter('data');
+console.log('Loading url data= ' + dataUrl);
+getData(dataUrl,
+    showResults
+);
 
-    var maxGamesPerSet = (results.winMatchesForSet * 2) - 1;
+ function showResults(err, results) {
+  if (err !== null) {
+    console.error('Failed to load data, ' + err);
+    return;
+  }
 
-
-
-
-
+    maxGamesPerSet = (results.winMatchesForSet * 2) - 1;
+    playerA = results.playerA;
+    playerB = results.playerB;
+    winMatchesForSet = results.winMatchesForSet;
 
     var color = Chart.helpers.color;
 
@@ -131,6 +90,9 @@
     var gameProgressionA = [];
     var gameProgressionB = [];
     var gameNames = [];
+    gameProgressionA.push(0);
+    gameProgressionB.push(0);
+    gameNames.push(' ');
 
     for (var i = 0, gi =0; i < matches.length; i += 1, gi +=1) {
         if (matches[i].scorePlayerA > matches[i].scorePlayerB) {
@@ -142,7 +104,7 @@
             currentWinStreakPlayerB = 0;
 
             gamesA[gi] = 1;
-            if (results.winMatchesForSet === currentGameWinsPlayerA) {
+            if (winMatchesForSet === currentGameWinsPlayerA) {
                 setWinsPlayerA++;
                 addLeagueTable(gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
                 gamesA = createGames();
@@ -162,7 +124,7 @@
             currentWinStreakPlayerA = 0;
 
             gamesB[gi] = 1;
-            if (results.winMatchesForSet === currentGameWinsPlayerB) {
+            if (winMatchesForSet === currentGameWinsPlayerB) {
                 setWinsPlayerB++;
                 addLeagueTable(gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
                 gamesA = createGames();
@@ -179,12 +141,12 @@
     addLeagueTable(gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
     addTotalsTable(gamesTotalA, gamesTotalB, setWinsPlayerA, setWinsPlayerB);
 
-    var ctx = document.getElementById("myChart");
+    var ctx = document.getElementById("chart1");
 
     var horizontalBarChartData = {
 			labels: ['Games'],
 			datasets: [{
-				label: results.playerA,
+				label: playerA,
 				borderColor: '#dd6384',
 				backgroundColor: '#ff6384',
 				borderWidth: 1,
@@ -192,7 +154,7 @@
 					winStreakPlayerA,0
 				]
 			}, {
-				label: results.playerB,
+				label: playerB,
 				borderColor: '#7765fe',
 				backgroundColor: '#cc65fe',
 				data: [
@@ -208,8 +170,6 @@
 				type: 'horizontalBar',
 				data: horizontalBarChartData,
 				options: {
-					// Elements options apply to all of the options unless overridden in a dataset
-					// In this case, we are setting the border of each horizontal bar to be 2px wide
 					elements: {
 						rectangle: {
 							borderWidth: 2,
@@ -237,8 +197,8 @@ var myDoughnutChart = new Chart(ctx, {
 
     // These labels appear in the legend and in the tooltips when hovering different arcs
     labels: [
-        results.playerA,
-        results.playerB
+        playerA,
+        playerB
     ]
 },
     options: {
@@ -250,7 +210,6 @@ var myDoughnutChart = new Chart(ctx, {
 });
 
 
-
     var ctx = document.getElementById("chart3");
     var myLineChart = new Chart(ctx, {
     type: 'line',
@@ -258,17 +217,17 @@ var myDoughnutChart = new Chart(ctx, {
     				labels: gameNames,
 
     datasets: [{
-					label: results.playerA,
-					steppedLine : true,
+					label: playerA,
+					steppedLine : false,
 					borderColor: '#dd6384',
 					backgroundColor: '#ff6384',
 					data: gameProgressionA,
 					fill: false,
 				},{
-					label: results.playerB,
+					label: playerB,
 					borderColor: '#aa65fe',
 					backgroundColor: '#cc65fe',
-					steppedLine : true,
+					steppedLine : false,
 					data: gameProgressionB,
 					fill: false,
 				}]
@@ -281,6 +240,9 @@ var myDoughnutChart = new Chart(ctx, {
 					}
     }
 });
+
+
+}
 
     function createGames() {
 
@@ -317,9 +279,9 @@ var myDoughnutChart = new Chart(ctx, {
         var trA = document.createElement('tr');
         var trB = document.createElement('tr');
         trA.appendChild( document.createElement('td') );
-        trA.cells[0].appendChild( document.createTextNode(results.playerA) );
+        trA.cells[0].appendChild( document.createTextNode(playerA) );
         trB.appendChild( document.createElement('td') );
-        trB.cells[0].appendChild( document.createTextNode(results.playerB) );
+        trB.cells[0].appendChild( document.createTextNode(playerB) );
         for (var i = 0; i < maxGamesPerSet; i++) {
             trA.appendChild( document.createElement('td') );
             if(playerAGames[i] === 1){
@@ -334,10 +296,10 @@ var myDoughnutChart = new Chart(ctx, {
         }
         trA.appendChild( document.createElement('td') );
         trB.appendChild( document.createElement('td') );
-        if(playerAWins === results.winMatchesForSet){
+        if(playerAWins === winMatchesForSet){
             trA.cells[1+ maxGamesPerSet].setAttribute('class', 'win');
         }
-        if(playerBWins === results.winMatchesForSet){
+        if(playerBWins === winMatchesForSet){
             trB.cells[1+ maxGamesPerSet].setAttribute('class', 'win');
         }
         trA.cells[1 + maxGamesPerSet].appendChild( document.createTextNode( playerAWins) );
@@ -374,9 +336,9 @@ var myDoughnutChart = new Chart(ctx, {
         var trA = document.createElement('tr');
         var trB = document.createElement('tr');
         trA.appendChild( document.createElement('td') );
-        trA.cells[0].appendChild( document.createTextNode(results.playerA) );
+        trA.cells[0].appendChild( document.createTextNode(playerA) );
         trB.appendChild( document.createElement('td') );
-        trB.cells[0].appendChild( document.createTextNode(results.playerB) );
+        trB.cells[0].appendChild( document.createTextNode(playerB) );
 
         trA.appendChild( document.createElement('td') );
         trB.appendChild( document.createElement('td') );
@@ -392,6 +354,29 @@ var myDoughnutChart = new Chart(ctx, {
 
         tablearea.appendChild(table);
     }
+
+    function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
+
+ function getData(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
+};
+
 </script>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
