@@ -16,8 +16,12 @@ Doen
 <script type="text/javascript">
     function loadLeague(){
 
-        var data = { "robot": "dog"};
-        createStore(data, null, null);
+        var data = { "robot": "rabbit"};
+        createStore(data, createdLeague);
+    }
+
+    function createdLeague(binId) {
+        console.log('CREATED=' + binId);
     }
 </script>
 </html>
