@@ -6,22 +6,54 @@
 
     <script src="js/store.js"></script>
 </head>
-<body onload="loadLeague()">
+<body>
+READY
+<div>
+    <input id="clickMe1" type="button" value="CREATE" onclick="createLeague();" />
+    <input id="clickMe2" type="button" value="ADD SCORE" onclick="addLeagueScore();" />
 
-Doen
+
+</div>
 
 
 </body>
 
 <script type="text/javascript">
-    function loadLeague(){
 
-        var data = { "robot": "rabbit"};
-        createStore(data, createdLeague);
-    }
+var BIN_ID = 'iqzvw';
+
+function addLeagueScore(){
+
+    addScore(BIN_ID, 1, 0, showLeague);
+}
+
+function createLeague() {
+
+    var data = {
+        "winMatchesForSet": 5,
+        "playerA": "Danny",
+        "playerB": "Eric",
+        "matches": [
+            {
+                "scorePlayerA": 0,
+                "scorePlayerB": 1
+            },
+            {
+                "scorePlayerA": 1,
+                "scorePlayerB": 0
+            }
+        ]
+    };
+    createGame(data, createdLeague);
+}
 
     function createdLeague(binId) {
         console.log('CREATED=' + binId);
+        BIN_ID = binId;
+    }
+
+    function showLeague(binId, data){
+        console.log('SHOW LEAGIE ' + binId);
     }
 </script>
 </html>
