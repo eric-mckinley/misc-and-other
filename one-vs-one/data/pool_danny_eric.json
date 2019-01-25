@@ -114,6 +114,10 @@
         {
             "scorePlayerA": 1,
             "scorePlayerB": 0
+        },
+        {
+            "scorePlayerA": 0,
+            "scorePlayerB": 1
         }
     ]
 }
