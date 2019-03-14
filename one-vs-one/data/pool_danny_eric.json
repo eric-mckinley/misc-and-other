@@ -270,6 +270,10 @@
         {
             "scorePlayerA": 1,
             "scorePlayerB": 0
+        },
+        {
+            "scorePlayerA": 1,
+            "scorePlayerB": 0
         }
     ]
 }
