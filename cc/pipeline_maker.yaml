@@ -1,0 +1,20 @@
+resources:
+- name: my_own_repo
+  type: git
+  source:
+    uri: https://github.com/eric-mckinley/misc-and-other.git
+    branch: master
+    # private_key: ((bitbucket_private_key))
+jobs:
+- name: smokey1
+  plan:
+  - get: my_own_repo
+    trigger: true
+  - set_pipeline: smokerx
+    file: pipeline_repository/cc/setup1.yaml
+- name: smokey2
+  plan:
+  - get: my_own_repo
+    trigger: true
+  - set_pipeline: smokery
+    file: my_own_repo/cc/setup2.yaml
